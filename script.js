@@ -30,12 +30,31 @@ const GameController = (() => {
     const player1 = Player("Player 1", "X");
     const player2 = Player("Player 2", "O");
     let currentPlayer = player1;
+    let gameOver = false;
 
     const getCurrentPlayer = () => currentPlayer;
 
     const playRound = (index) => {
+
+        if (gameOver) {
+            console.log("Game is over. Restart to play again.");
+            return;
+        }
+
         if (Gameboard.updateCell(index, currentPlayer.marker)) {
             console.log(`${currentPlayer.name} placed ${currentPlayer.marker} at ${index}`);
+
+            if (checkWinner(currentPlayer.marker)) {
+                console.log(`${currentPlayer.name} wins!`)
+                gameOver = true;
+                return;
+            }
+
+            if (checkTie()) {
+                console.log("It's a tie!");
+                gameOver = true;
+                return;
+            }
             switchTurn();
         } else {
             console.log("Cell already taken!")
@@ -46,9 +65,28 @@ const GameController = (() => {
         currentPlayer = currentPlayer === player1 ? player2 : player1;
     }
 
+    const checkWinner = (marker) => {
+        const b = Gameboard.getBoard();
+        const winConditions = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
+            [0, 3, 6], [1, 4, 7], [2, 5, 8], // columns
+            [0, 4, 8], [2, 4, 6],            // diagonals 
+        ];
+
+        return winConditions.some(condition => condition.every(index => b[index] === marker)
+        );
+    };
+
+    const checkTie = () => {
+        const b = Gameboard.getBoard();
+        return b.every(cell => cell !== "");
+    }
+
     const restart = () => {
         Gameboard.reset();
         currentPlayer = player1;
+        gameOver = false;
+        console.log("Game restarted!");
     };
 
     return { playRound, getCurrentPlayer, restart };
