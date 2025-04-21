@@ -8,14 +8,28 @@ body{
 #gameboard {
     display: grid;
     grid-template-columns: repeat(3, 100px);
-    grid-gap: 5px;
+    grid-template-rows: repeat(3, 100px);
+    gap: 5px;
     justify-content: center;
+    margin-top: 20px;
 }
 
-#gameboard div {
+/* #gameboard div {
     width: 100px;
     height: 100px;
     background-color: #eee;
+    font-size: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+} */
+
+.cell {
+    width: 100px;
+    height: 100px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
     font-size: 2rem;
     display: flex;
     justify-content: center;

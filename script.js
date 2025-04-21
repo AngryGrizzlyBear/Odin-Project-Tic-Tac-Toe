@@ -92,4 +92,22 @@ const GameController = (() => {
     return { playRound, getCurrentPlayer, restart };
 })();
 
+const DisplayController = (() => {
+    const boardContainer = document.getElementById("gameboard");
+
+    const renderBoard = () => {
+        const board = Gameboard.getBoard();
+        boardContainer.innerHTML = "";
+
+        board.forEach((cell, index) => {
+            const cellDiv = document.createElement("div");
+            cellDiv.classList.add("cell");
+            cellDiv.textContent = cell; // X, O, or "";
+            boardContainer.appendChild(cellDiv);
+        });
+    };
+
+    return {renderBoard};
+})();
+
 console.log("Tic Tac Toe is ready!");
