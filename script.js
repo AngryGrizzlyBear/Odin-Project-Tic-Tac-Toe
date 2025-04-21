@@ -103,6 +103,14 @@ const DisplayController = (() => {
             const cellDiv = document.createElement("div");
             cellDiv.classList.add("cell");
             cellDiv.textContent = cell; // X, O, or "";
+           
+
+            //Adding a click event to each cell
+            cellDiv.addEventListener("click", () => {
+                GameController.playRound(index);
+                renderBoard(); // Re-render the board after a move
+            });
+
             boardContainer.appendChild(cellDiv);
         });
     };
