@@ -27,38 +27,45 @@ const Player = (name, marker) => {
 
 // Game Controller Module (IIFE)
 const GameController = (() => {
-    const player1 = Player("Player 1", "X");
-    const player2 = Player("Player 2", "O");
-    let currentPlayer = player1;
+    let player1;
+    let player2;
+    let currentPlayer;
     let gameOver = false;
+
+    const setPlayers = (name1, name2) => {
+        player1 = Player(name1 || "Player 1", "X");
+        player2 = Player(name2 || "Player 2", "O");
+        currentPlayer = player1;
+        gameOver = false;
+    };
+
 
     const getCurrentPlayer = () => currentPlayer;
 
     const playRound = (index) => {
 
-        if (gameOver) {
-            console.log("Game is over. Restart to play again.");
+        if (!currentPlayer || gameOver) {
+            console.log("Game hasn't started or is already over");
             return;
         }
 
         if (Gameboard.updateCell(index, currentPlayer.marker)) {
-            console.log(`${currentPlayer.name} placed ${currentPlayer.marker} at ${index}`);
+            DisplayController.renderBoard();
 
             if (checkWinner(currentPlayer.marker)) {
-                console.log(`${currentPlayer.name} wins!`)
+                DisplayController.setStatus(`${currentPlayer.name} wins!`)
                 gameOver = true;
                 return;
             }
 
             if (checkTie()) {
-                console.log("It's a tie!");
+                DisplayController.setStatus("It's a tie!");
                 gameOver = true;
                 return;
             }
             switchTurn();
-        } else {
-            console.log("Cell already taken!")
-        }
+            DisplayController.setStatus(`${currentPlayer.name}'s turn`);
+        } 
     };
 
     const switchTurn = () => {
@@ -78,22 +85,24 @@ const GameController = (() => {
     };
 
     const checkTie = () => {
-        const b = Gameboard.getBoard();
-        return b.every(cell => cell !== "");
+        return Gameboard.getBoard().every(cell => cell !== "");
     }
 
     const restart = () => {
         Gameboard.reset();
         currentPlayer = player1;
         gameOver = false;
-        console.log("Game restarted!");
+       DisplayController.renderBoard();
+       DisplayController.setStatus(`${currentPlayer.name}'s turn`);
     };
 
-    return { playRound, getCurrentPlayer, restart };
+    return { setPlayers, playRound, getCurrentPlayer, restart };
 })();
 
 const DisplayController = (() => {
     const boardContainer = document.getElementById("gameboard");
+    const statusDiv = document.getElementById("status");
+    const startBtn = document.getElementById("startBtn");
 
     const renderBoard = () => {
         const board = Gameboard.getBoard();
@@ -108,14 +117,28 @@ const DisplayController = (() => {
             //Adding a click event to each cell
             cellDiv.addEventListener("click", () => {
                 GameController.playRound(index);
-                renderBoard(); // Re-render the board after a move
             });
 
             boardContainer.appendChild(cellDiv);
         });
     };
 
-    return {renderBoard};
+    const setStatus = (message) => {
+        statusDiv.textContent = message;
+    };
+
+    //Start/restart Button logic
+    startBtn.addEventListener("click", ()=> {
+        const name1 = document.getElementById("player1").value;
+        const name2 = document.getElementById("player2").value;
+
+        GameController.setPlayers(name1, name2);
+        GameController.restart();
+    })
+    return {renderBoard, setStatus};
 })();
+
+DisplayController.setStatus("Enter names to start the game.");
+DisplayController.renderBoard();
 
 console.log("Tic Tac Toe is ready!");

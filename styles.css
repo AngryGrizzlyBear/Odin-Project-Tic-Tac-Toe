@@ -36,3 +36,18 @@ body{
     align-items: center;
     cursor: pointer;
 }
+
+#setup {
+    margin-bottom: 20px;
+}
+
+input {
+    padding: 5px;
+    margin: 0 10px;
+}
+
+#status {
+    margin-top: 15px;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
